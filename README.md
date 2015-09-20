@@ -1,66 +1,61 @@
-# Kratos
+<div align="center">
+  <img src="http://i.imgur.com/PfHOWEX.png">
+</div>
+<br>
 
-> Powerful full stack framework using the strength of the JavaScript ecosystem
+<p align="center">
+  <strong><a href="#about">About</a></strong>
+  |
+  <strong><a href="#gettingstarted">Getting Started</a></strong>
+  |
+  <strong><a href="#docs">Documentation</a></strong>
+  |
+  <strong><a href="#license">License</a></strong>
+  |
+  <strong><a href="CONTRIBUTING.md">Contributing</a></strong>
+</p>
+<br>
+## About
 
-README coming soon. Kratos is under a complete rewrite going from using [Express](http://expressjs.com) to using [Koa](http://koajs.com).
+_Kratos_ is a modern framework for building web applications on [Node.js](http://nodejs.org) based on up-to-date ES6 features from V8.
 
-## Install
+_Kratos_ does require the use of Node.js `v4.0.0` or later.
 
-```js
-npm install --save kratos
+## Getting Started
+
+### Install
+
+```
+$ npm install kratos --save
 ```
 
-## Usage
+### Basic Kratos Application
 
 ```js
-var kratos = require('kratos')
-var app = kratos()
+'use strict'
+
+const kratos = require('kratos')
+const app = kratos()
 
 app.get('/', function * () {
-  this.body = 'Hello World'
+  this.body = 'Hello, World!'
 })
 
 app.run()
 ```
 
+### Start Application
+
 ```
 $ node app.js
 
-Kratos app started on http://0.0.0.0:1337 in development mode.
+Kratos Application started on http://0.0.0.0:1337 in development mode.
 ```
 
-## Testing
+## Documentation
 
-```
-$ npm run test
-```
-
-## Credits
-
-- [Josh Manders](https://certifiedweb.ninja)
-- [All Contributors](../../contributors)
+Currently we're lacking documentation and plan to write some here soon. Please be patient.
 
 ## License
 
-(The MIT License)
-
-Copyright (c) 2015 Viracore &lt;support@viracore.com&gt;
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-'Software'), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+[MIT](LICENSE) &copy; [Viracore](https://www.viracore.com) & [Contributors](../../graphs/contributors).

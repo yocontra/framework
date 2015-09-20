@@ -1,24 +1,47 @@
 'use strict'
 
-let http = require('http')
-let dirname = require('path').dirname
-let Koa = require('koa')
-let Router = require('kratos-router')
-let mount = require('koa-mount')
-let responseTime = require('koa-response-time')
-let logger = require('koa-logger')
-let compress = require('koa-compress')
-let views = require('koa-views')
+const http = require('http')
+const dirname = require('path').dirname
+const Koa = require('koa')
+const Router = require('kratos-router')
+const mount = require('koa-mount')
+const responseTime = require('koa-response-time')
+const logger = require('koa-logger')
+const compress = require('koa-compress')
+const views = require('koa-views')
+const Config = require('kratos-config')
+const ConfigLoader = require('./config')
+const env = require('process-env')
+const pkg = require('../package.json')
 
 class Kratos extends Koa {
 
-  constructor (options) {
+  constructor (config) {
     super()
-    this._options = options || {}
-    this._router = new Router()
+    this._setupConfig(config)
+    this._setupApp()
     this._setupRouter()
     this._setupHeaders()
     this._setupMiddleware()
+  }
+
+  set env (value) {
+    return value
+  }
+
+  get env () {
+    return env('node_env') || 'development'
+  }
+
+  set router (router) {
+    this._router = router
+  }
+
+  get router () {
+    if (this._router) {
+      return this._router
+    }
+    return new Router()
   }
 
   get inProduction () {
@@ -33,13 +56,29 @@ class Kratos extends Koa {
     return this._inEnv('test')
   }
 
+  _inEnv (env) {
+    return this.env.toLowerCase() === env.toLowerCase()
+  }
+
+  _setupConfig (config) {
+    Config.setInstance((new ConfigLoader()).load(config))
+    module.parent.paths.push(dirname(__dirname) + '/node_modules')
+  }
+
+  _setupApp () {
+    this.name = Config('app.name')
+    this.proxy = Config('app.proxy')
+    this.subdomainOffset = Config('app.subdomainOffset')
+  }
+
   _setupRouter () {
-    super.use(this._router.routes())
-    super.use(this._router.allowedMethods())
-    this._router.methods.map((method) => {
+    this.router = new Router()
+    super.use(this.router.routes())
+    super.use(this.router.allowedMethods())
+    this.router.methods.map((method) => {
       return method.toLowerCase()
     }).forEach((method) => {
-      this[method] = this._router[method].bind(this._router)
+      this[method] = this.router[method].bind(this.router)
     })
   }
 
@@ -61,26 +100,22 @@ class Kratos extends Koa {
     }
     this.use(compress())
     this.use(views({
-      root: this._options.views || dirname(module.parent.filename) + '/views',
-      default: this._options.engine || 'jade'
+      root: Config('views.path'),
+      default: Config('views.engine')
     }))
   }
 
-  _inEnv (env) {
-    return this.env.toLowerCase() === env.toLowerCase()
-  }
-
   use () {
-    this._router.use.apply(this._router, arguments)
+    this.router.use.apply(this.router, arguments)
     return this
   }
 
   route () {
-    return this._router.url.apply(this._router, arguments)
+    return this.router.url.apply(this.router, arguments)
   }
 
   param () {
-    return this._router.param.apply(this._router, arguments)
+    return this.router.param.apply(this.router, arguments)
   }
 
   mount (path, app) {
@@ -88,18 +123,20 @@ class Kratos extends Koa {
     return this
   }
 
-  run (port, address) {
-    port = port || process.env.PORT || 1337
-    address = address || process.env.ADDRESS || '0.0.0.0'
-    http.createServer(this.callback()).listen(port, address, () => {
-      console.log(`Kratos app started on http://${address}:${port} in ${this.env} mode.`)
+  run (port) {
+    port = port || Config('app.port')
+    http.createServer(this.callback())
+    .listen(port, '0.0.0.0', () => {
+      console.log(`${Config('app.name')} started on http://0.0.0.0:${port} in ${this.env} mode.`)
     })
   }
 
 }
 
-let kratos = module.exports = function (options) {
-  return new kratos.Application(options)
+let kratos = module.exports = (config) => {
+  return new kratos.Application(config)
 }
 
 kratos.Application = Kratos
+
+kratos.VERSION = pkg.version
