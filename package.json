@@ -24,6 +24,9 @@
     "app",
     "es6"
   ],
+  "engines": {
+    "node": ">=4.0.0"
+  },
   "author": {
     "name": "Viarcore",
     "email": "support@viracore.com",
