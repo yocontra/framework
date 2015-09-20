@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="http://i.imgur.com/PfHOWEX.png">
+  <img src="kratos.png">
 </div>
 <br>
 
