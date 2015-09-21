@@ -1,10 +1,12 @@
 {
   "name": "kratos",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Powerful full stack framework using the strength of the JavaScript ecosystem",
   "homepage": "https://github.com/kratos/kratos",
   "main": "dist/index.js",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "test": "mocha --reporter spec --bail --check-leaks test/",
     "test:coverage": "istanbul cover _mocha -- --reporter dot --check-leaks test/",
