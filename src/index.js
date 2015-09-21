@@ -7,7 +7,7 @@ import responseTime from 'koa-response-time'
 import logger from 'koa-logger'
 import compress from 'koa-compress'
 import views from 'koa-views'
-import Config from 'kratos-config'
+import Config, { setInstance as ConfigInstance } from 'kratos-config'
 import Loader from './config'
 import env from 'process-env'
 
@@ -59,7 +59,7 @@ class Kratos extends Koa {
 
   _setupConfig (config) {
     let loader = new Loader()
-    Config.setInstance(loader.load(config))
+    ConfigInstance(loader.load(config))
     module.parent.paths.push(join(dirname(__dirname), 'node_modules'))
   }
 
