@@ -1,5 +1,5 @@
 import http from 'http'
-import { dirname } from 'path'
+import { dirname, join } from 'path'
 import Koa from 'koa'
 import Router from 'kratos-router'
 import mount from 'koa-mount'
@@ -8,7 +8,7 @@ import logger from 'koa-logger'
 import compress from 'koa-compress'
 import views from 'koa-views'
 import Config from 'kratos-config'
-import ConfigLoader from './config'
+import Loader from './config'
 import env from 'process-env'
 
 class Kratos extends Koa {
@@ -58,8 +58,9 @@ class Kratos extends Koa {
   }
 
   _setupConfig (config) {
-    Config.setInstance((new ConfigLoader()).load(config))
-    module.parent.paths.push(dirname(__dirname) + '/node_modules')
+    let loader = new Loader()
+    Config.setInstance(loader.load(config))
+    module.parent.paths.push(join(dirname(__dirname), 'node_modules'))
   }
 
   _setupApp () {
