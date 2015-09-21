@@ -96,18 +96,13 @@ class Kratos extends Koa {
   _setupMiddleware () {
     this.use(responseTime())
     if (this.inDevelopment) {
-      this.use(logger())
+      this.router.use(logger())
     }
-    this.use(compress())
-    this.use(views({
+    this.router.use(compress())
+    this.router.use(views({
       root: Config('views.path'),
       default: Config('views.engine')
     }))
-  }
-
-  use () {
-    this.router.use.apply(this.router, arguments)
-    return this
   }
 
   route () {
@@ -119,7 +114,7 @@ class Kratos extends Koa {
   }
 
   mount (path, app) {
-    super.use(mount(path, app))
+    this.use(mount(path, app))
     return this
   }
 
