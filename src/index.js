@@ -1,18 +1,15 @@
-'use strict'
-
-const http = require('http')
-const dirname = require('path').dirname
-const Koa = require('koa')
-const Router = require('kratos-router')
-const mount = require('koa-mount')
-const responseTime = require('koa-response-time')
-const logger = require('koa-logger')
-const compress = require('koa-compress')
-const views = require('koa-views')
-const Config = require('kratos-config')
-const ConfigLoader = require('./config')
-const env = require('process-env')
-const pkg = require('../package.json')
+import http from 'http'
+import { dirname } from 'path'
+import Koa from 'koa'
+import Router from 'kratos-router'
+import mount from 'koa-mount'
+import responseTime from 'koa-response-time'
+import logger from 'koa-logger'
+import compress from 'koa-compress'
+import views from 'koa-views'
+import Config from 'kratos-config'
+import ConfigLoader from './config'
+import env from 'process-env'
 
 class Kratos extends Koa {
 
@@ -128,10 +125,6 @@ class Kratos extends Koa {
 
 }
 
-let kratos = module.exports = (config) => {
-  return new kratos.Application(config)
+export default function (config) {
+  return new Kratos(config)
 }
-
-kratos.Application = Kratos
-
-kratos.VERSION = pkg.version

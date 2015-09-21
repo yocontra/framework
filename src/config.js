@@ -1,12 +1,10 @@
-'use strict'
+import { existsSync as exists, readdirSync as readDir } from 'fs'
+import { resolve } from 'path'
+import { Config } from 'kratos-config'
+import _ from 'lodash'
+import env from 'process-env'
 
-const fs = require('fs')
-const resolve = require('path').resolve
-const Config = require('kratos-config').Config
-const _ = require('lodash')
-const env = require('process-env')
-
-class Loader extends Config {
+export default class Loader extends Config {
 
   get env () {
     return env('node_env') || 'development'
@@ -51,7 +49,7 @@ class Loader extends Config {
   }
 
   fromFile (file) {
-    if (!fs.existsSync(file)) {
+    if (!exists(file)) {
       throw Error('File does not exist. ' + file)
     }
     file = file.substr(0, file.length - 3)
@@ -60,20 +58,20 @@ class Loader extends Config {
   }
 
   fromDirectory (path) {
-    if (!fs.existsSync(path)) {
+    if (!exists(path)) {
       throw Error('Path does not exist. ' + path)
     }
 
     let config = {}
 
-    fs.readdirSync(path).filter((file) => {
+    readDir(path).filter((file) => {
       return file.endsWith('.js')
     }).forEach((file) => {
       file = file.substr(0, file.length - 3)
       let prodConfig = require(path + '/' + file)
       let envConfig = {}
       let envFile = path + '/' + this.env + '/' + file
-      if (fs.existsSync(envFile + '.js')) {
+      if (exists(envFile + '.js')) {
         envConfig = require(envFile)
       }
       config[file] = _.defaultsDeep(envConfig, prodConfig)
@@ -81,5 +79,3 @@ class Loader extends Config {
     this.config = _.defaultsDeep(config, this.defaultConfig)
   }
 }
-
-module.exports = Loader
