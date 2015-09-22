@@ -1,44 +1,24 @@
-import http from 'http'
-import { dirname, join } from 'path'
-import Koa from 'koa'
-import Router from 'kratos-router'
-import mount from 'koa-mount'
-import responseTime from 'koa-response-time'
-import logger from 'koa-logger'
-import compress from 'koa-compress'
-import views from 'koa-views'
-import Config, { setInstance as ConfigInstance } from 'kratos-config'
-import Loader from './config'
-import env from 'process-env'
+'use strict'
+
+let http = require('http')
+let dirname = require('path').dirname
+let Koa = require('koa')
+let Router = require('kratos-router')
+let mount = require('koa-mount')
+let responseTime = require('koa-response-time')
+let logger = require('koa-logger')
+let compress = require('koa-compress')
+let views = require('koa-views')
 
 class Kratos extends Koa {
 
-  constructor (config) {
+  constructor (options) {
     super()
-    this._setupConfig(config)
-    this._setupApp()
+    this._options = options || {}
+    this._router = new Router()
     this._setupRouter()
     this._setupHeaders()
     this._setupMiddleware()
-  }
-
-  set env (value) {
-    return value
-  }
-
-  get env () {
-    return env('node_env') || 'development'
-  }
-
-  set router (router) {
-    this._router = router
-  }
-
-  get router () {
-    if (this._router) {
-      return this._router
-    }
-    return new Router()
   }
 
   get inProduction () {
@@ -53,30 +33,13 @@ class Kratos extends Koa {
     return this._inEnv('test')
   }
 
-  _inEnv (env) {
-    return this.env.toLowerCase() === env.toLowerCase()
-  }
-
-  _setupConfig (config) {
-    let loader = new Loader()
-    ConfigInstance(loader.load(config))
-    module.parent.paths.push(join(dirname(__dirname), 'node_modules'))
-  }
-
-  _setupApp () {
-    this.name = Config('app.name')
-    this.proxy = Config('app.proxy')
-    this.subdomainOffset = Config('app.subdomainOffset')
-  }
-
   _setupRouter () {
-    this.router = new Router()
-    this.use(this.router.routes())
-    this.use(this.router.allowedMethods())
-    this.router.methods.map((method) => {
+    super.use(this._router.routes())
+    super.use(this._router.allowedMethods())
+    this._router.methods.map((method) => {
       return method.toLowerCase()
     }).forEach((method) => {
-      this[method] = this.router[method].bind(this.router)
+      this[method] = this._router[method].bind(this._router)
     })
   }
 
@@ -97,35 +60,46 @@ class Kratos extends Koa {
       this.use(logger())
     }
     this.use(compress())
-    this.use(views({
-      root: Config('views.path'),
-      default: Config('views.engine')
+    this.router.use(views({
+      root: this._options.views || dirname(module.parent.filename) + '/views',
+      default: this._options.engine || 'jade'
     }))
   }
 
-  route () {
-    return this.router.url.apply(this.router, arguments)
+  _inEnv (env) {
+    return this.env.toLowerCase() === env.toLowerCase()
   }
 
-  param () {
-    return this.router.param.apply(this.router, arguments)
-  }
-
-  mount (path, app) {
-    this.use(mount(path, app))
+  use () {
+    this._router.use.apply(this._router, arguments)
     return this
   }
 
-  run (port) {
-    port = port || Config('app.port')
-    http.createServer(this.callback())
-    .listen(port, '0.0.0.0', () => {
-      console.log(`${Config('app.name')} started on http://0.0.0.0:${port} in ${this.env} mode.`)
+  route () {
+    return this._router.url.apply(this._router, arguments)
+  }
+
+  param () {
+    return this._router.param.apply(this._router, arguments)
+  }
+
+  mount (path, app) {
+    super.use(mount(path, app))
+    return this
+  }
+
+  run (port, address) {
+    port = port || process.env.PORT || 1337
+    address = address || process.env.ADDRESS || '0.0.0.0'
+    http.createServer(this.callback()).listen(port, address, () => {
+      console.log(`Kratos app started on http://${address}:${port} in ${this.env} mode.`)
     })
   }
 
 }
 
-export default function (config) {
-  return new Kratos(config)
+let kratos = module.exports = function (options) {
+  return new kratos.Application(options)
 }
+
+kratos.Application = Kratos
