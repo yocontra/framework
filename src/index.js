@@ -2,11 +2,6 @@ import http from 'http'
 import { dirname, join } from 'path'
 import Koa from 'koa'
 import Router from 'kratos-router'
-import mount from 'koa-mount'
-import responseTime from 'koa-response-time'
-import logger from 'koa-logger'
-import compress from 'koa-compress'
-import views from 'koa-views'
 import Config, { setInstance as ConfigInstance } from 'kratos-config'
 import Loader from './config'
 import env from 'process-env'
@@ -19,7 +14,6 @@ class Kratos extends Koa {
     this._setupApp()
     this._setupRouter()
     this._setupHeaders()
-    this._setupMiddleware()
   }
 
   set env (value) {
@@ -89,18 +83,6 @@ class Kratos extends Koa {
         this.response.set('X-XSS-Protection', '1; mode=block')
       }
     })
-  }
-
-  _setupMiddleware () {
-    this.use(responseTime())
-    if (this.inDevelopment) {
-      this.use(logger())
-    }
-    this.use(compress())
-    this.router.use(views({
-      root: Config('views.path'),
-      default: Config('views.engine')
-    }))
   }
 
   route () {
