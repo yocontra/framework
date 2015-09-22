@@ -54,7 +54,7 @@ class Kratos extends Koa {
   _setupConfig (config) {
     let loader = new Loader()
     ConfigInstance(loader.load(config))
-    module.parent.paths.push(join(dirname(__dirname), 'node_modules'))
+    // module.parent.paths.push(join(dirname(__dirname), '..', 'node_modules'))
   }
 
   _setupApp () {
