@@ -4,6 +4,7 @@ import Router from 'kratos-router'
 import Config from 'kratos-config'
 import Loader from './config'
 import env from 'process-env'
+import mount from 'koa-mount'
 
 class Kratos extends Koa {
 
