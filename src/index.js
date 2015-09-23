@@ -1,8 +1,7 @@
 import http from 'http'
-import { dirname, join } from 'path'
 import Koa from 'koa'
 import Router from 'kratos-router'
-import Config, { setInstance as ConfigInstance } from 'kratos-config'
+import Config from 'kratos-config'
 import Loader from './config'
 import env from 'process-env'
 
@@ -52,15 +51,13 @@ class Kratos extends Koa {
   }
 
   _setupConfig (config) {
-    let loader = new Loader()
-    ConfigInstance(loader.load(config))
-    module.parent.paths.push(join(dirname(__dirname), '..', 'node_modules'))
+    Config.instance = (new Loader()).load(config)
   }
 
   _setupApp () {
-    this.name = Config('app.name')
-    this.proxy = Config('app.proxy')
-    this.subdomainOffset = Config('app.subdomainOffset')
+    this.name = Config.get('app.name')
+    this.proxy = Config.get('app.proxy')
+    this.subdomainOffset = Config.get('app.subdomainOffset')
   }
 
   _setupRouter () {
@@ -99,10 +96,10 @@ class Kratos extends Koa {
   }
 
   run (port) {
-    port = port || Config('app.port')
+    port = port || Config.get('app.port')
     http.createServer(this.callback())
     .listen(port, '0.0.0.0', () => {
-      console.log(`${Config('app.name')} started on http://0.0.0.0:${port} in ${this.env} mode.`)
+      console.log(`${Config.get('app.name')} started on http://0.0.0.0:${port} in ${this.env} mode.`)
     })
   }
 

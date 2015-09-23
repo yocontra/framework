@@ -31,7 +31,7 @@ export default class Loader extends Config {
       this.config = this.defaultConfig
     }
     if (typeof path === 'object') {
-      this.config = path
+      this.config = _.defaultsDeep(path, this.defaultConfig)
     }
 
     if (typeof path === 'string') {
