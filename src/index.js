@@ -52,7 +52,9 @@ class Kratos extends Koa {
   }
 
   _setupConfig (config) {
-    Config.instance = (new Loader()).load(config)
+    if (!Config.instance) {
+      Config.instance = (new Loader()).load(config)
+    }
   }
 
   _setupApp () {
