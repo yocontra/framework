@@ -85,8 +85,12 @@ class Kratos extends Koa {
     })
   }
 
-  route () {
-    return this.router.url.apply(this.router, arguments)
+  use () {
+    const middlewares = Array.prototype.slice.call(arguments)
+    middlewares.forEach((middleware) => {
+      super.use(middleware)
+    })
+    return this
   }
 
   param () {
