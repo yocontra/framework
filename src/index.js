@@ -1,19 +1,24 @@
 import http from 'http'
 import Koa from 'koa'
 import Router from 'kratos-router'
-import Config from 'kratos-config'
+import config from 'kratos-config'
 import Loader from './config'
 import env from 'process-env'
 import mount from 'koa-mount'
+import responseTime from 'koa-response-time'
+import logger from 'koa-logger'
+import compress from 'koa-compress'
+import views from 'koa-views'
 
 class Kratos extends Koa {
 
-  constructor (config) {
+  constructor (path) {
     super()
-    this._setupConfig(config)
+    this._setupConfig(path)
     this._setupApp()
     this._setupRouter()
     this._setupHeaders()
+    this._setupMiddleware()
   }
 
   set env (value) {
@@ -51,26 +56,23 @@ class Kratos extends Koa {
     return this.env.toLowerCase() === env.toLowerCase()
   }
 
-  _setupConfig (config) {
-    if (!Config.instance) {
-      Config.instance = (new Loader()).load(config)
+  _setupConfig (path) {
+    if (!config.instance) {
+      config.instance = (new Loader()).load(path)
     }
   }
 
   _setupApp () {
-    this.name = Config.get('app.name')
-    this.proxy = Config.get('app.proxy')
-    this.subdomainOffset = Config.get('app.subdomainOffset')
+    this.name = config.get('app.name')
+    this.proxy = config.get('app.proxy')
+    this.subdomainOffset = config.get('app.subdomainOffset')
   }
 
   _setupRouter () {
     this.router = new Router()
-    this.use(this.router.routes())
-    this.use(this.router.allowedMethods())
-    this.router.methods.map((method) => {
-      return method.toLowerCase()
-    }).forEach((method) => {
-      this[method] = this.router[method].bind(this.router)
+    this.router.methods.map(method => {
+      const verb = method.toLowerCase()
+      this[verb] = this.router[verb].bind(this.router)
     })
   }
 
@@ -83,6 +85,15 @@ class Kratos extends Koa {
         this.response.set('X-XSS-Protection', '1; mode=block')
       }
     })
+  }
+
+  _setupMiddleware () {
+    this.use(this.router.allowedMethods())
+    this.use(responseTime(), logger(), compress())
+    this.use(views({
+      root: config.get('views.path'),
+      default: config.get('views.engine')
+    }))
   }
 
   use () {
@@ -103,10 +114,11 @@ class Kratos extends Koa {
   }
 
   run (port) {
-    port = port || Config.get('app.port')
+    this.use(this.router.routes())
+    port = port || config.get('app.port')
     http.createServer(this.callback())
     .listen(port, '0.0.0.0', () => {
-      console.log(`${Config.get('app.name')} started on http://0.0.0.0:${port} in ${this.env} mode.`)
+      console.log(`${config.get('app.name')} started on http://0.0.0.0:${port} in ${this.env} mode.`)
     })
   }
 
