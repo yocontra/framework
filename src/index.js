@@ -21,14 +21,6 @@ class Kratos extends Koa {
     this._setupMiddleware()
   }
 
-  set env (value) {
-    return value
-  }
-
-  get env () {
-    return env('node_env') || 'development'
-  }
-
   set router (router) {
     this._router = router
   }
@@ -64,8 +56,10 @@ class Kratos extends Koa {
 
   _setupApp () {
     this.name = config.get('app.name')
+    this.env = env('node_env') || 'development'
     this.proxy = config.get('app.proxy')
     this.subdomainOffset = config.get('app.subdomainOffset')
+    this.keys = config.get('keys')
   }
 
   _setupRouter () {
