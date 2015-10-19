@@ -1,0 +1,24 @@
+sudo: false
+language: node_js
+cache:
+  directories:
+    - node_modules
+branches:
+  only:
+    - develop
+notifications:
+  email: false
+node_js:
+  - iojs
+  - 4.0
+  - 0.12
+before_install:
+  - npm i -g npm@latest
+before_script:
+  - npm prune
+script:
+  - npm run test:coverage
+  - npm run test:coverage:check
+after_success:
+  - npm run build
+  - npm run release

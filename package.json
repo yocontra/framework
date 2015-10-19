@@ -8,16 +8,15 @@
     "dist"
   ],
   "scripts": {
-    "test": "mocha --reporter spec --bail --check-leaks test/",
-    "test:coverage": "istanbul cover _mocha -- --reporter dot --check-leaks test/",
-    "test:travis": "istanbul cover _mocha --report lcovonly -- --reporter spec --check-leaks test/",
+    "test": "mocha --compilers js:babel/register --reporter spec --bail --check-leaks test/",
+    "test:coverage": "istanbul cover _mocha -- --compilers js:babel/register --reporter dot --check-leaks test/",
+    "test:coverage:check": "istanbul check-coverage --statements 50 --branches 50 --functions 50 --lines 50",
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
     "build": "babel src --optional=runtime --whitelist=es6.modules,strict --out-dir dist",
     "develop": "npm run build -- --watch",
     "commit": "git-cz",
-    "release": "semantic-release pre && npm publish && semantic-replease post",
-    "prepublish": "npm run build"
+    "release": "semantic-release pre && npm publish && semantic-replease post"
   },
   "repository": "kratos/kratos",
   "keywords": [
@@ -74,7 +73,22 @@
     "mocha": "2.3.2",
     "rimraf": "2.4.3",
     "semantic-release": "4.3.5",
-    "standard": "5.2.2"
+    "standard": "5.2.2",
+    "supertest": "1.1.0"
+  },
+  "config": {
+    "ghooks": {
+      "pre-commit": "npm run test && npm run test:check-coverage"
+    }
+  },
+  "standard": {
+    "ignore": [
+      "dist/"
+    ],
+    "globals": [
+      "describe",
+      "it"
+    ]
   },
   "czConfig": {
     "path": "node_modules/cz-conventional-changelog"
