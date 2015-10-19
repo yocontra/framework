@@ -1,6 +1,5 @@
 {
   "name": "kratos",
-  "version": "1.6.3",
   "description": "Powerful full stack framework using the strength of the JavaScript ecosystem",
   "homepage": "https://git.io/kratos",
   "main": "dist/",
