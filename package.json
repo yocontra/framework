@@ -78,7 +78,7 @@
   },
   "config": {
     "ghooks": {
-      "pre-commit": "npm run test && npm run test:check-coverage"
+      "pre-commit": "npm run test && npm run test:coverage:check"
     }
   },
   "standard": {
