@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import kratos from '../dist'
+import kratos from '../src'
 
 describe('app', () => {
   it('should set development env when NODE_ENV is missing', () => {
