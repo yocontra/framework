@@ -1,10 +1,13 @@
 import { existsSync as exists, readdirSync as readDir } from 'fs'
 import { resolve } from 'path'
-import { Config } from 'kratos-config'
 import _ from 'lodash'
 import env from 'process-env'
 
-export default class Loader extends Config {
+export default class Config {
+
+  constructor () {
+    this.config = {}
+  }
 
   get env () {
     return env('node_env') || 'development'

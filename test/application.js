@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import kratos from '../src'
+import { Kratos } from '../src'
 
 describe('app', () => {
   it('should set development env when NODE_ENV is missing', () => {
@@ -7,7 +7,7 @@ describe('app', () => {
     process.env.NODE_ENV = ''
     expect(process.env.NODE_ENV).to.not.equal(NODE_ENV)
     expect(process.env.NODE_ENV).to.equal('')
-    const app = kratos()
+    const app = new Kratos()
     expect(app.env).to.equal('development')
   })
 })

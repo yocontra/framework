@@ -2,7 +2,7 @@ import http from 'http'
 import Koa from 'koa'
 import Router from 'kratos-router'
 import config from 'kratos-config'
-import Loader from './config'
+import Config from './config'
 import env from 'process-env'
 import mount from 'koa-mount'
 import responseTime from 'koa-response-time'
@@ -10,7 +10,7 @@ import logger from 'koa-logger'
 import compress from 'koa-compress'
 import views from 'koa-views'
 
-class Kratos extends Koa {
+export class Kratos extends Koa {
 
   constructor (path) {
     super()
@@ -50,7 +50,7 @@ class Kratos extends Koa {
 
   _setupConfig (path) {
     if (!config.instance) {
-      config.instance = (new Loader()).load(path)
+      config.instance = (new Config).load(path)
     }
   }
 
