@@ -1,13 +1,8 @@
 <div align="center">
   <img src="http://i.imgur.com/jmjPV6W.png">
-  <br>
-  [![](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com)
-  [![](https://img.shields.io/travis/kratos/kratos/develop.svg)](https://travis-ci.org/kratos/kratos) [![](https://img.shields.io/coveralls/kratos/kratos/develop.svg)](https://coveralls.io/github/kratos/kratos)
-  [![](https://img.shields.io/npm/v/kratos.svg)](https://www.npmjs.com/package/kratos)
-  [![](https://img.shields.io/npm/dm/kratos.svg)](https://www.npmjs.com/package/kratos)
-  [![](https://img.shields.io/npm/l/kratos.svg)](https://www.npmjs.com/package/kratos)
+  <br><br>
+  <a href="http://standardjs.com"><img src="https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat"></a> <a href="https://travis-ci.org/kratos/kratos"><img src="https://img.shields.io/travis/kratos/kratos/develop.svg"></a> <a href="https://coveralls.io/github/kratos/kratos"><img src="https://img.shields.io/coveralls/kratos/kratos/develop.svg"></a> <a href="https://www.npmjs.com/package/kratos"><img src="https://img.shields.io/npm/v/kratos.svg"></a> <a href="https://www.npmjs.com/package/kratos"><img src="https://img.shields.io/npm/dm/kratos.svg"></a> <a href="https://www.npmjs.com/package/kratos"><img src="https://img.shields.io/npm/l/kratos.svg"></a>
 </div>
-<br>
 
 <p align="center">
   <strong><a href="#about">About</a></strong>
