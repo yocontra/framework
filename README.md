@@ -1,7 +1,12 @@
 <div align="center">
-  <img src="kratos.png">
+  <img src="http://i.imgur.com/jmjPV6W.png">
 </div>
 <br>
+[![](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com)
+[![](https://img.shields.io/travis/kratos/kratos/develop.svg)](https://travis-ci.org/kratos/kratos) [![](https://img.shields.io/coveralls/kratos/kratos/develop.svg)](https://coveralls.io/github/kratos/kratos)
+[![](https://img.shields.io/npm/v/kratos.svg)](https://www.npmjs.com/package/kratos)
+[![](https://img.shields.io/npm/dm/kratos.svg)](https://www.npmjs.com/package/kratos)
+[![](https://img.shields.io/npm/l/kratos.svg)](https://www.npmjs.com/package/kratos)
 
 <p align="center">
   <strong><a href="#about">About</a></strong>

@@ -9,7 +9,6 @@ branches:
 notifications:
   email: false
 node_js:
-  - iojs
   - 4.0
 before_install:
   - npm i -g npm@latest
