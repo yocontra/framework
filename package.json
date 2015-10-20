@@ -14,7 +14,7 @@
     "prebuild": "npm run clean",
     "build": "babel src --optional=runtime --whitelist=es6.modules,strict --out-dir dist",
     "develop": "npm run build -- --watch",
-    "commit": "git-cz",
+    "commit": "git-cz && git push",
     "release": "semantic-release pre && npm publish && semantic-release post"
   },
   "repository": {

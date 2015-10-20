@@ -1,12 +1,13 @@
 <div align="center">
   <img src="http://i.imgur.com/jmjPV6W.png">
+  <br>
+  [![](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com)
+  [![](https://img.shields.io/travis/kratos/kratos/develop.svg)](https://travis-ci.org/kratos/kratos) [![](https://img.shields.io/coveralls/kratos/kratos/develop.svg)](https://coveralls.io/github/kratos/kratos)
+  [![](https://img.shields.io/npm/v/kratos.svg)](https://www.npmjs.com/package/kratos)
+  [![](https://img.shields.io/npm/dm/kratos.svg)](https://www.npmjs.com/package/kratos)
+  [![](https://img.shields.io/npm/l/kratos.svg)](https://www.npmjs.com/package/kratos)
 </div>
 <br>
-[![](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com)
-[![](https://img.shields.io/travis/kratos/kratos/develop.svg)](https://travis-ci.org/kratos/kratos) [![](https://img.shields.io/coveralls/kratos/kratos/develop.svg)](https://coveralls.io/github/kratos/kratos)
-[![](https://img.shields.io/npm/v/kratos.svg)](https://www.npmjs.com/package/kratos)
-[![](https://img.shields.io/npm/dm/kratos.svg)](https://www.npmjs.com/package/kratos)
-[![](https://img.shields.io/npm/l/kratos.svg)](https://www.npmjs.com/package/kratos)
 
 <p align="center">
   <strong><a href="#about">About</a></strong>
@@ -37,9 +38,8 @@ $ npm install kratos --save
 ### Basic Kratos Application
 
 ```js
-'use strict'
+import kratos from 'kratos'
 
-const kratos = require('kratos')
 const app = kratos()
 
 app.get('/', function * () {
