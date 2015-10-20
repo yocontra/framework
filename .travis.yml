@@ -18,5 +18,6 @@ script:
   - npm run test:coverage
   - npm run test:coverage:check
 after_success:
+  - coveralls
   - npm run build
   - npm run release
