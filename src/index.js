@@ -50,7 +50,7 @@ export class Kratos extends Koa {
 
   _setupConfig (path) {
     if (!config.instance) {
-      config.instance = (new Config).load(path)
+      config.instance = (new Config()).load(path)
     }
   }
 
@@ -112,7 +112,9 @@ export class Kratos extends Koa {
     port = port || config.get('app.port')
     http.createServer(this.callback())
     .listen(port, '0.0.0.0', () => {
-      console.log(`${config.get('app.name')} started on http://0.0.0.0:${port} in ${this.env} mode.`)
+      if (!this.inTesting) {
+        console.log(`${config.get('app.name')} started on http://0.0.0.0:${port} in ${this.env} mode.`)
+      }
     })
   }
 

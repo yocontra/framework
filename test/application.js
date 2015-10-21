@@ -10,6 +10,7 @@ describe('app', () => {
     expect(process.env.NODE_ENV).to.equal('')
     const app = kratos()
     expect(app.env).to.equal('development')
+    process.env.NODE_ENV = NODE_ENV
   })
 
   it('should work with class constructor', () => {
