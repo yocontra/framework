@@ -8,11 +8,6 @@ Please [open an issue](../../issues) for bug reports and patches. Include your O
 
 If you have a new feature or large change in mind, please open a new issue with your suggestion to discuss the idea together.
 
-## Commit Messages
-
-- Use past tense ("added x feature").
-- Less than 72 characters for the first line of your commit.
-
 ## Code Style
 
 We follow the [JavaScript Standard Style](http://standardjs.com).

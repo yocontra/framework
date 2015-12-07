@@ -1,61 +1,16 @@
 <div align="center">
   <img src="http://i.imgur.com/jmjPV6W.png">
   <br><br>
-  <a href="http://standardjs.com"><img src="https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat"></a> <a href="https://travis-ci.org/kratos/kratos"><img src="https://img.shields.io/travis/kratos/kratos/develop.svg"></a> <a href="https://coveralls.io/github/kratos/kratos"><img src="https://img.shields.io/coveralls/kratos/kratos/develop.svg"></a> <a href="https://www.npmjs.com/package/kratos"><img src="https://img.shields.io/npm/v/kratos.svg"></a> <a href="https://www.npmjs.com/package/kratos"><img src="https://img.shields.io/npm/dm/kratos.svg"></a> <a href="https://www.npmjs.com/package/kratos"><img src="https://img.shields.io/npm/l/kratos.svg"></a>
+  <a href="http://standardjs.com"><img src="https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat"></a> <a href="https://www.npmjs.com/package/kratos"><img src="https://img.shields.io/npm/v/kratos.svg"></a> <a href="https://www.npmjs.com/package/kratos"><img src="https://img.shields.io/npm/dm/kratos.svg"></a> <a href="https://www.npmjs.com/package/kratos"><img src="https://img.shields.io/npm/l/kratos.svg"></a>
 </div>
-
 <p align="center">
-  <strong><a href="#about">About</a></strong>
+  <strong><a href="https://kratos.github.io">About</a></strong>
   |
-  <strong><a href="#getting-started">Getting Started</a></strong>
+  <strong><a href="https://kratos.github.io/getting-started">Getting Started</a></strong>
   |
-  <strong><a href="#docs">Documentation</a></strong>
+  <strong><a href="https://kratos.github.io/documentation">Documentation</a></strong>
   |
-  <strong><a href="#license">License</a></strong>
+  <strong><a href="https://kratos.github.io/contributing">Contributing</a></strong>
   |
-  <strong><a href="CONTRIBUTING.md">Contributing</a></strong>
+  <strong><a href="https://kratos.github.io/license">License</a></strong>
 </p>
-<br>
-## About
-
-_Kratos_ is a modern framework for building web applications on [Node.js](http://nodejs.org) based on up-to-date ES6 features from V8.
-
-_Kratos_ does require the use of Node.js `v4.0.0` or later.
-
-## Getting Started
-
-### Install
-
-```
-$ npm install kratos --save
-```
-
-### Basic Kratos Application
-
-```js
-import kratos from 'kratos'
-
-const app = kratos()
-
-app.get('/', function * () {
-  this.body = 'Hello, World!'
-})
-
-app.run()
-```
-
-### Start Application
-
-```
-$ node app.js
-
-Kratos Application started on http://0.0.0.0:1337 in development mode.
-```
-
-## Documentation
-
-Currently we're lacking documentation and plan to write some here soon. Please be patient.
-
-## License
-
-[MIT](LICENSE) &copy; [Viracore](https://www.viracore.com) & [Contributors](../../graphs/contributors).
