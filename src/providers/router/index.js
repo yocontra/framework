@@ -1,7 +1,7 @@
 import { Provider } from '../../container/provider'
 import KoaRouter from 'koa-router'
 
-export class RouterProvider extends Provider {
+class RouterProvider extends Provider {
   register () {
     this.instance('router', new Router).asWeak()
   }
@@ -17,3 +17,5 @@ class Router extends KoaRouter {
     // TODO: Same as `controller` just for resource based controllers.
   }
 }
+
+module.exports = RouterProvider

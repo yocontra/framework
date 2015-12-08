@@ -10,7 +10,7 @@ import snakeRes from './snake-res'
 import * as ctx from './context'
 import * as res from './response'
 
-export class ServerProvider extends Provider {
+class ServerProvider extends Provider {
   constructor (config, log) {
     super()
     this.config = config
@@ -35,3 +35,5 @@ export class ServerProvider extends Provider {
     this.instance('server', koa).asWeak()
   }
 }
+
+module.exports = ServerProvider

@@ -13,7 +13,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
-    "build": "babel src --out-dir dist --presets es2015-node4",
+    "build": "babel src --out-dir dist --presets nodejs-lts",
     "develop": "npm run build -- --watch"
   },
   "repository": {
@@ -62,7 +62,7 @@
   },
   "devDependencies": {
     "babel-cli": "6.2.0",
-    "babel-preset-es2015-node4": "2.0.2",
+    "babel-preset-nodejs-lts": "1.0.0",
     "bookshelf": "0.9.1",
     "chai": "3.2.0",
     "istanbul": "0.3.20",
