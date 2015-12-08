@@ -1,4 +1,4 @@
-import { parseArgs } from '../helpers'
+import { parseArgs } from './helpers'
 
 export class Binding {
   constructor (name, source, factory) {

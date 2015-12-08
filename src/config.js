@@ -1,4 +1,4 @@
-import { exists, readDir, defaults } from '../../helpers'
+import { exists, readDir, defaults } from './helpers'
 import env from 'process-env'
 
 const defaultConfig = {

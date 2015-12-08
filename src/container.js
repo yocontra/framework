@@ -1,8 +1,11 @@
+import { EventEmitter } from 'events'
 import { Binding } from './binding'
-import { parseArgs, instantiate } from '../helpers'
+import { parseArgs, instantiate } from './helpers'
 
-export class Container {
+export class Container extends EventEmitter {
   constructor () {
+    super()
+    this.setMaxListeners(0)
     this.bindings = {}
   }
 
