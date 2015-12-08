@@ -1,1 +1,1 @@
-module.exports = require('./src/helpers')
+module.exports = require('./dist/helpers')
