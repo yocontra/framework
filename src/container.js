@@ -2,42 +2,44 @@ import { EventEmitter } from 'events'
 import { Binding } from './binding'
 import { parseArgs, instantiate } from './helpers'
 
-export class Container extends EventEmitter {
+export default class Container extends EventEmitter {
   constructor () {
     super()
     this.setMaxListeners(0)
     this.bindings = {}
   }
 
-  register (thing, fn) {
-    const existing = this.bindings[thing]
-    if (existing && !existing.isWeak()) {
-      throw new Error(`Cannot override: ${thing}`)
+  bind (name, thing) {
+    const existing = this.exists(name) ? this.bindings[name] : false
+    if (existing && !existing.isOverridable()) {
+      throw new Error(`Cannot override: ${name}`)
     }
 
-    const binding = new Binding(thing, fn, (bind) => {
-      return this.build(bind.source, bind.getDependencyNames())
-    })
+    const binding = new Binding(name, thing)
 
-    this.bindings[thing] = binding
+    this.bindings[name] = binding
     return binding
   }
 
-  exists (thing) {
-    return !!this.bindings[thing]
+  alias (alias, name, { overwrite = false } = {}) {
+    if (!this.exists(alias) && !overwrite) {
+      this.bindings[alias] = this.bindings[name]
+    }
+    return this
   }
 
-  factory () {
-    return (thing) => this.make(thing)
+  exists (name) {
+    return !!this.bindings[name]
   }
 
-  make (thing) {
-    if (typeof thing === 'string') {
-      return this.resolve(thing).build()
+  make (name) {
+    if (typeof name === 'string') {
+      const {thing, deps} = this.resolve(name)
+      return this.build(thing, deps)
     }
 
-    if (typeof thing === 'function') {
-      return this.build(thing, parseArgs(thing))
+    if (typeof name === 'function') {
+      return this.build(name, parseArgs(name))
     }
 
     return null
@@ -51,13 +53,13 @@ export class Container extends EventEmitter {
     return this.bindings[thing]
   }
 
-  build (thing, dependencies) {
-    const deps = []
-
-    for (let i = 0; i < dependencies.length; i++) {
-      deps.push(this.make(dependencies[i]))
+  build (thing, deps) {
+    if (typeof thing === 'string' || typeof thing === 'object') {
+      return thing
     }
 
-    return instantiate(thing, deps)
+    const dependencies = deps.map((dep) => this.make(dep))
+
+    return instantiate(thing, dependencies)
   }
 }

@@ -15,8 +15,6 @@
   <strong><a href="https://kratos.github.io/license">License</a></strong>
 </p>
 
-## License
-
 ```txt
 The MIT License (MIT)
 

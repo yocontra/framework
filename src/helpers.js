@@ -1,10 +1,11 @@
-import { existsSync, readdirSync } from 'fs'
+import { existsSync, readdirSync, writeFileSync } from 'fs'
 import { defaultsDeep, snakeCase as lodashSnakeCase } from 'lodash'
-import Promise from 'bluebird'
 
 export const exists = existsSync.bind(existsSync)
 
 export const readDir = readdirSync.bind(readdirSync)
+
+export const write = writeFileSync.bind(writeFileSync)
 
 export const defaults = defaultsDeep.bind(defaultsDeep)
 

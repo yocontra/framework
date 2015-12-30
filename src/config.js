@@ -1,20 +1,17 @@
 import { exists, readDir, defaults } from './helpers'
-import env from 'process-env'
 
-const defaultConfig = {
-  app: {
-    name: 'Kratos Application',
-    address: '0.0.0.0',
-    port: 1337
-  },
-  env: env.all()
-}
+export default class Config {
 
-export class Config {
-
-  constructor (config = defaultConfig) {
-    this.env = env.get('node_env', 'development')
-    this.config = config
+  constructor (env, path) {
+    this.env = env
+    this.config = {
+      app: {
+        name: 'Kratos Application',
+        hostname: '0.0.0.0',
+        port: 1337
+      }
+    }
+    this.load(path)
   }
 
   load (path) {

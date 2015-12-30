@@ -1,6 +1,6 @@
 import { HttpError } from './errors'
 
-export const cacheControl  = (maxAge)  => {
+export const cacheControl = (maxAge) => {
   if (maxAge === false) {
     this.set('Cache-Control', 'private, no-cache')
     return this
@@ -21,12 +21,13 @@ export const cacheControl  = (maxAge)  => {
 
 export const cc = cacheControl
 
-export function * send (response) {
+export function * send (response, type = 'application/json') {
   if (response instanceof HttpError) {
     const { status, code, message } = response
     this.status = status
     this.body = { code, message }
   } else {
+    this.type = type
     this.body = response
   }
 }

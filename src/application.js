@@ -1,69 +1,41 @@
 import Koa from 'koa'
 import merge from 'merge-descriptors'
-import { Container } from './container'
-import { Config } from './config'
-import { Router } from './router'
-import * as ctx from './context'
-import * as res from './response'
+import Kernel from './kernel'
+import Router from './router'
+import Controller from './controller'
 
-export class Application extends Container {
-  constructor () {
-    super()
-    GLOBAL.make = this.make.bind(this)
-    this.router = new Router()
-    this.config = new Config()
-    this.koa = new Koa()
-    this.koa.name = this.config.get('app.name')
-    this.koa.env = this.config.get('env.node_env', 'development')
-    this.koa.proxy = this.config.get('app.proxy', false)
-    this.koa.subdomainOffset = this.config.get('app.subdomainOffset', 2)
-    this.koa.keys = this.config.get('app.keys', ['secret', 'server', 'keys'])
-    merge(this.koa.context, ctx)
-    merge(this.koa.response, res)
-    this.register('App', this).asInstance()
-    this.register('Route', this.router).asInstance()
-    this.koa.on('error', (err) => this.emit('error', err))
+export default class Application extends Kernel {
+
+  constructor (path = process.cwd()) {
+    super(path)
+    Router.app = this
+    Controller.app = this
+    this._router = new Router()
+    this._koa = new Koa()
+    this._koa.env = this.env()
+    this._koa.name = this.config('app.name')
+    this._koa.proxy = this.config('app.proxy', false)
+    this._koa.subdomainOffset = this.config('app.subdomainOffset', 2)
+    this._koa.keys = this.config('app.keys', ['secret', 'server', 'keys'])
+    merge(this._koa.context, require('./context'))
+    merge(this._koa.response, require('./response'))
   }
 
-  use (...middlewares) {
-    middlewares.map
-  }
-
-  head (...args) {
-    return this.router.head.apply(this.router, args)
-  }
-
-  options (...args) {
-    return this.router.options.apply(this.router, args)
-  }
-
-  get (...args) {
-    return this.router.get.apply(this.router, args)
-  }
-
-  post (...args) {
-    return this.router.post.apply(this.router, args)
-  }
-
-  put (...args) {
-    return this.router.put.apply(this.router, args)
-  }
-
-  patch (...args) {
-    return this.router.patch.apply(this.router, args)
-  }
-
-  delete (...args) {
-    return this.router.delete.apply(this.router, args)
-  }
-
-  registerService (service) {
-    this.make(service).register()
-    return this
+  use (path, ...args) {
+    if (([path].concat(args).length === 2) && (args[0] instanceof Router)) {
+      return this._router.use(path, args[0].routes())
+    }
+    return this._koa.use.apply(this._koa, [path].concat(args))
   }
 
   bootstrap () {
-    this.use(this.router.routes())
-    return this.koa.callback.apply(this.koa)
+    const app = this
+    this.use(function * (next) {
+      this.make = app.make.bind(app)
+      yield next
+    })
+    this.use(this._router.routes(), this._router.allowedMethods())
+    this._koa.on('error', this.emit.bind(this, 'error'))
+    return this._koa.callback.apply(this._koa)
   }
 }
