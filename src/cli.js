@@ -7,9 +7,10 @@ import Command from './command'
 import { readDir } from './helpers'
 
 export default class CLI extends Kernel {
-  constructor (path = process.cwd()) {
+  constructor (path = process.cwd(), standalone = false) {
     super(path)
     this.commands = []
+    this.standalone = standalone
     program.version(VERSION, '-v, --version')
     Command.app = this
   }
@@ -22,7 +23,11 @@ export default class CLI extends Kernel {
   bootstrap () {
     readDir(resolve(__dirname, 'commands'))
       .filter((command) => command.endsWith('.js'))
-      .map((command) => this.command(require(resolve(__dirname, 'commands', command))))
+      .map((command) => {
+        if (!(command === 'start.js' && this.standalone)) {
+          this.command(require(resolve(__dirname, 'commands', command)))
+        }
+      })
     this.commands.forEach((Command) => {
       const command = new Command()
       const cmd = program.command(`${command.name}${command.signature ? ` ${command.signature}` : ''}`)
@@ -35,7 +40,7 @@ export default class CLI extends Kernel {
         }
       }
       cmd.action((...args) => {
-        Promise.try(() => command.action.apply(command, args))
+        Promise.resolve().then(() => command.action.apply(command, args))
           .then(() => {
             if (!command.blocking) {
               process.exit()
