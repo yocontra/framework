@@ -16,7 +16,7 @@
     "build": "babel src --out-dir dist --presets nodejs-lts",
     "develop": "npm run build -- --watch"
   },
-  "repository": "kratos/kratos",
+  "repository": "kratos/framework",
   "keywords": [
     "web",
     "app",
