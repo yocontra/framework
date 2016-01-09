@@ -1,6 +1,17 @@
+/**
+ * Import dependencies.
+ */
 import { existsSync, readdirSync, writeFileSync } from 'fs'
-import { defaultsDeep, snakeCase as lodashSnakeCase } from 'lodash'
+import {
+  set,
+  defaultsDeep,
+  snakeCase as lodashSnakeCase,
+  startCase as lodashStartCase,
+  has as lodashHas,
+  get as lodashGet
+} from 'lodash'
 
+// Bind to new name. Keep it all sync.
 export const exists = existsSync.bind(existsSync)
 
 export const readDir = readdirSync.bind(readdirSync)
@@ -11,6 +22,19 @@ export const defaults = defaultsDeep.bind(defaultsDeep)
 
 export const snakeCase = lodashSnakeCase.bind(lodashSnakeCase)
 
+export const startCase = lodashStartCase.bind(lodashStartCase)
+
+export const has = lodashHas.bind(lodashHas)
+
+export const get = lodashGet.bind(lodashGet)
+
+export const put = get.bind(get)
+
+/**
+ * snakeCaseDeep.
+ * @param  {object} obj Object to snakeCase over.
+ * @return {Object}     snakeCased Object.
+ */
 export function snakeCaseDeep (obj) {
   for (let prop in obj) {
     if (obj.hasOwnProperty(prop)) {
@@ -25,8 +49,14 @@ export function snakeCaseDeep (obj) {
   return obj
 }
 
+// Function arguments RegExp.
 export const FUNCTION_ARGS = /(?:function|constructor)[^\(]*\(([^\)]*)/m
 
+/**
+ * Parse Arguments of Function.
+ * @param  {Function} fn Function to get arguments for.
+ * @return {Array}       Array of arguments.
+ */
 export function parseArgs (fn) {
   const matches = []
   let args = fn.toString().match(FUNCTION_ARGS)
@@ -46,6 +76,12 @@ export function parseArgs (fn) {
   return matches
 }
 
-export function instantiate (Constructor, args = []) {
+/**
+ * Instantiate a function/Class.
+ * @param  {Function|Class} Constructor Constructor function to instantiate.
+ * @param  {Array} args                 Any arguments to pass to constructor.
+ * @return {Object}                     Instance of function/class.
+ */
+export function instantiate (Constructor, ...args) {
   return new Constructor(...args)
 }

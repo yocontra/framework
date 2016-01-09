@@ -1,3 +1,9 @@
+/**
+ * Export public API.
+ */
+exports.NAME = require('./package.json').name
+exports.DESCRIPTION = require('./package.json').description
+exports.HOMEPAGE = require('./package.json').homepage
 exports.VERSION = require('./package.json').version
 exports.Application = require('./dist/application')
 exports.CLI = require('./dist/cli')

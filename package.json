@@ -1,6 +1,6 @@
 {
   "name": "kratos",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "MVC framework for NodeJS",
   "homepage": "https://git.io/kratos",
   "main": "index.js",
@@ -50,11 +50,13 @@
   },
   "devDependencies": {
     "babel-cli": "6.2.0",
+    "babel-eslint": "5.0.0-beta6",
     "babel-preset-nodejs-lts": "1.2.0",
     "rimraf": "*",
     "standard": "*"
   },
   "standard": {
+    "parser": "babel-eslint",
     "ignore": [
       "dist/**"
     ],

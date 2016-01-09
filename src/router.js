@@ -1,26 +1,56 @@
+/**
+ * Import dependencies.
+ */
 import KoaRouter from 'koa-router'
 import methods from 'methods'
 import { singularize } from 'inflect'
-import { exists, readDir } from './helpers'
 
+/**
+ * Router.
+ */
 export default class Router extends KoaRouter {
+  /**
+   * Hold all registered controllers.
+   * @type {Object}
+   */
   static controllers = {}
 
+  /**
+   * Add controller to registry.
+   * @param {String} name     Name of controller.
+   * @param {Object} instance Instance of controller.
+   */
   static addController (name, instance) {
     Router.controllers[name] = instance
   }
 
+  /**
+   * Get controller from registry.
+   * @param  {String} name Name of controller.
+   * @return {Object}      Controller instance.
+   */
   static controller (name) {
     return Router.controllers[name]
   }
 
+  /**
+   * Router constructor.
+   * @param  {Object}      Options object.
+   */
   constructor (opts = {}) {
     super(opts)
-    methods.forEach((method) => Router.prototype[method] = this.register.bind(this, method))
   }
 
+  /**
+   * Create and register a route.
+   * @param  {String|Array} method    HTTP verb(s) to match.
+   * @param  {String} name            Name of route.
+   * @param  {String|RegExp} path     Path string or regular expression.
+   * @param  {Function} ...middleware Middleware functions.
+   * @return {Object}                 Instance of Router.
+   */
   register (method, name, path, ...middleware) {
-    if (!((typeof path === 'string' && path.indexOf('.') === -1) || path instanceof RegExp)) {
+    if (!((typeof path === 'string' && !~path.indexOf('.')) || path instanceof RegExp)) {
       middleware = [path].concat(middleware)
       path = name
       name = null
@@ -32,49 +62,81 @@ export default class Router extends KoaRouter {
       middleware.push(Router.controller(controller)[action])
     }
 
-    super.register(path.replace(/^\//, ''), Array.isArray(method) ? method : [method], middleware, {
-      name: name
-    })
+    path = path.replace(/^\//, '')
+    method = Array.isArray(method) ? method : [method]
 
-    return this
+    return super.register(path, method, middleware, { name })
   }
 
-  resource (resource, controller, options = { only: false, except: false }) {
-    const { name, url } = this.getParts(resource)
-    const id = options.id || `${singularize(name)}Id`
-    const routes = {
-      index: { method: 'get', name: `${name}.index`, url: `${url}`, action: `${controller}.index` },
-      create: { method: 'get', name: `${name}.create`, url: `${url}/create`, action: `${controller}.create` },
-      store: { method: 'post', name: `${name}.store`, url: `${url}`, action: `${controller}.store` },
-      show: { method: 'get', name: `${name}.show`, url: `${url}/:${id}`, action: `${controller}.show` },
-      edit: { method: 'get', name: `${name}.edit`, url: `${url}/:${id}/edit`, action: `${controller}.edit` },
-      update: { method: ['put', 'patch'], name: `${name}.update`, url: `${url}/:${id}`, action: `${controller}.update` },
-      destroy: { method: 'delete', name: `${name}.destroy`, url: `${url}/:${id}`, action: `${controller}.destroy` }
-    }
-
-    Object.keys(routes)
-      .filter((route) => {
-        if (Array.isArray(options.only)) {
-          return options.only.indexOf(route) !== -1
-        }
-        if (Array.isArray(options.except)) {
-          return options.except.indexOf(route) === -1
-        }
-      })
-      .map((route) => {
-        this.register(routes[route].method, routes[route].name, routes[route].url, routes[route].action)
-      })
-
-    return this
+  /**
+   * Create and register a route responding to all verbs.
+   * @param  {String} name            Name of route.
+   * @param  {String|RegExp} path     Path string or regular expression.
+   * @param  {Function} ...middleware Middleware functions.
+   * @return {Object}                 Instance of Router.
+   */
+  any (name, path, ...middleware) {
+    return this.register(this.methods, name, path, ...middleware)
   }
 
-  getParts (resource) {
-    const [parent, child] = resource.split('.')
+  /**
+   * Register a resource.
+   * @param  {String} resource   Resource to register.
+   * @param  {String} controller Controller to associate with resource.
+   * @param  {Object} options    Options object.
+   * @return {Object}            Instance of Router.
+   */
+   resource (resource, controller, options = { only: false, except: false }) {
+     const { name, path } = getParts(resource)
+     const id = options.id || `${singularize(name)}Id`
+     const routes = {
+       index: { verb: 'get', path: `${path}` },
+       create: { verb: 'get', path: `${path}/create` },
+       store: { verb: 'post', path: `${path}` },
+       show: { verb: 'get', path: `${path}/:${id}` },
+       edit: { verb: 'get', path: `${path}/:${id}/edit` },
+       update: { verb: ['put', 'patch'], path: `${path}/:${id}` },
+       destroy: { verb: 'delete', path: `${path}/:${id}` }
+     }
 
-    if (typeof child === 'undefined') {
-      return { name: parent, url: `/${parent}` }
-    } else {
-      return { name: child, url: `/${parent}/${child}` }
-    }
+     Object.keys(routes)
+       .filter((route) => {
+         if (Array.isArray(options.only)) {
+           return options.only.indexOf(route) !== -1
+         }
+         if (Array.isArray(options.except)) {
+           return options.except.indexOf(route) === -1
+         }
+       })
+       .map((route) => {
+         const { verb, path } = routes[route]
+         this.register(verb, `${name}.${route}`, path, `${controller}.${route}`)
+       })
+
+     return this
+   }
+}
+
+/*
+ * Loop over all verbs available and register alias methods.
+ */
+methods.map((method) => {
+  Router.prototype[method] = function (name, path, ...middleware) {
+    return this.register(method, name, path, ...middleware)
+  }
+})
+
+/**
+* Return object of resource parts.
+* @param  {String} resource Resource to parse.
+* @return {Object}          Name and path of resource.
+*/
+function getParts (resource) {
+  const [parent, child] = resource.split('.')
+
+  if (typeof child === 'undefined') {
+    return { name: parent, path: `/${parent}` }
+  } else {
+    return { name: child, path: `/${parent}/${child}` }
   }
 }

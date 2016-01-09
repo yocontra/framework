@@ -1,104 +1,69 @@
-import { exists, readDir, defaults } from './helpers'
+/**
+ * Import dependencies.
+ */
+import { resolve, basename } from 'path'
+import { exists, readDir, defaults, has, get, put } from './helpers'
 
+/**
+ * Config class.
+ */
 export default class Config {
 
+  /**
+   * Constructor.
+   * @param  {string} env  Current environment name.
+   * @param  {string} path Path of config files to load.
+   */
   constructor (env, path) {
-    this.env = env
-    this.config = {
-      app: {
-        name: 'Kratos Application',
-        hostname: '0.0.0.0',
-        port: 1337
-      }
-    }
-    this.load(path)
+    // Initialize config as empty object.
+    this.config = {}
+
+    // Read path and filter only `*.js`.
+    // Then map over all files.
+    readDir(path).filter((file) => file.endsWith('.js'))
+      .map((file) => {
+        // Resolve potential corresponding environment file.
+        const envFile = resolve(path, env, file)
+
+        // Get production file.
+        const prodObj = require(resolve(path, file))
+
+        // Get corresponding environment file if exists otherwise
+        // return empty object.
+        const envObj = exists(envFile) ? require(envFile) : {}
+
+        // Merge it all together and set it on the `this.config` object.
+        this.config[basename(file, '.js')] = defaults(envObj, prodObj)
+      })
   }
 
-  load (path) {
-    readDir(path).filter((file) => {
-      return file.endsWith('.js')
-    }).forEach((file) => {
-      file = file.substr(0, file.length - 3)
-      let prodConfig = require(`${path}/${file}`)
-      let envConfig = {}
-      let envFile = `${path}/${this.env}/${file}`
-      if (exists(`${envFile}.js`)) {
-        envConfig = require(envFile)
-      }
-      this.config[file] = defaults(envConfig, prodConfig, this.config[file] || {})
-    })
-    return this
+  /**
+   * Check if path is direct property.
+   * @param  {string|Array}  path The path to check.
+   * @return {Boolean}       True if `path` is direct property or false.
+   */
+  has (path) {
+    return has(this.config, path)
   }
 
-  has (path, config = this.config) {
-    if (typeof config !== 'object' || config === null) {
-      return false
-    }
-
-    if (typeof path === 'string') {
-      path = path.split('.')
-    }
-
-    if (!(path instanceof Array) || path.length === 0) {
-      return false
-    }
-
-    path = path.slice()
-
-    let key = path.shift()
-
-    if (path.length === 0) {
-      return Object.hasOwnProperty.apply(config, [key])
-    } else {
-      return this.has(path, config[key])
-    }
+  /**
+   * Get the property value at `path` or return `defaultValue`.
+   * @param  {String|Array} path    The path of the property to get.
+   * @param  {Mixed} defaultValue   Returned value if resolved `path` is undefined.
+   * @return {Mixed}                Returns the resolved value.
+   */
+  get (path, defaultValue = false) {
+    return get(this.config, path, defaultValue)
   }
 
-  get (path, defaultValue = false, config = this.config) {
-    if (typeof config !== 'object' || config === null) {
-      return null
-    }
-
-    if (typeof path === 'string') {
-      path = path.split('.')
-    }
-
-    path = path.slice()
-
-    let key = path.shift()
-
-    if (path.length === 0) {
-      return config[key] || defaultValue
-    }
-
-    return this.get(path, defaultValue, config[key])
-  }
-
-  put (path, value, config = this.config) {
-    if (typeof config !== 'object' || config === null) {
-      return false
-    }
-
-    if (typeof path === 'string') {
-      path = path.split('.')
-    }
-
-    path = path.slice()
-
-    let key = path.shift()
-
-    if (path.length === 0) {
-      config[key] = value
-    } else {
-      if (typeof config[key] === 'undefined') {
-        config[key] = {}
-      }
-
-      if (typeof config[key] !== 'object' || config[key] === null) {
-        return false
-      }
-
-      return this.put(path, value, config[key])
-    }
+  /**
+   * Sets the property value of `path`.
+   * If a portion of `path` does not exist it is created.
+   * @param  {String|Array} path  The path of the property to set.
+   * @param  {Mixed} value        The value to set.
+   * @return {object}             Returns object.
+   */
+  put (path, value) {
+    return put(this.config, path, value)
   }
 }
