@@ -9,11 +9,6 @@ import { singularize } from 'inflect'
  * Router.
  */
 export default class Router extends KoaRouter {
-  /**
-   * Hold all registered controllers.
-   * @type {Object}
-   */
-  static controllers = {}
 
   /**
    * Add controller to registry.
@@ -107,6 +102,7 @@ export default class Router extends KoaRouter {
          if (Array.isArray(options.except)) {
            return options.except.indexOf(route) === -1
          }
+         return true
        })
        .map((route) => {
          const { verb, path } = routes[route]

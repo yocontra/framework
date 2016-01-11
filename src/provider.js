@@ -3,11 +3,6 @@
  */
 export default class Provider {
   /**
-   * Instance of application.
-   * @type {Application}
-   */
-  static app = null
-  /**
    * Environment proxy method.
    */
   env (...args) {

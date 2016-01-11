@@ -1,6 +1,6 @@
 {
   "name": "kratos",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "MVC framework for NodeJS",
   "homepage": "https://git.io/kratos",
   "main": "index.js",

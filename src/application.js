@@ -18,6 +18,7 @@ export default class Application extends Kernel {
    */
   constructor (path = process.cwd()) {
     super(path)
+    Router.controllers = {}
     Router.app = this
     Controller.app = this
     this._router = new Router()
@@ -49,7 +50,14 @@ export default class Application extends Kernel {
   bootstrap () {
     const app = this
     this.use(function * (next) {
-      this.container = app.resolve.bind(app)
+      this.container = {
+        get (...args) {
+          return app.resolve(...args)
+        },
+        bind (...args) {
+          return app.bind(...args)
+        }
+      }
       yield next
     })
     this.use(this._router.routes(), this._router.allowedMethods())
